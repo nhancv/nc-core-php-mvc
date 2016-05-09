@@ -15,6 +15,7 @@ define('APP_DIR', ROOT_DIR . 'application/');
 
 // Includes
 require(APP_DIR . 'config/config.php');
+require(APP_DIR . 'models/include_db.inc');
 require(ROOT_DIR . 'system/model.php');
 require(ROOT_DIR . 'system/view.php');
 require(ROOT_DIR . 'system/controller.php');

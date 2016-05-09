@@ -8,7 +8,6 @@
  */
 class Example_model extends Model
 {
-
     public function getSomething($id)
     {
         $id = $this->escapeString($id);
@@ -16,5 +15,10 @@ class Example_model extends Model
         return $result;
     }
 
+    public function getAllUser()
+    {
+        $result = $this->query('SELECT * FROM User');
+        return $result;
+    }
 }
 

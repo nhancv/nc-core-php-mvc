@@ -14,14 +14,18 @@ class Model
     public function __construct()
     {
         global $config;
+        $this->connection = mysqli_connect($config['db_host'], $config['db_username'], $config['db_password']) or die($this->getConnectionError());
+        mysqli_select_db($this->connection, $config['db_name']);
+    }
 
-        $this->connection = mysql_pconnect($config['db_host'], $config['db_username'], $config['db_password']) or die('MySQL Error: ' . mysql_error());
-        mysql_select_db($config['db_name'], $this->connection);
+    public function getConnectionError()
+    {
+        return 'MySQL Error: ' . $this->connection->connect_error;
     }
 
     public function escapeString($string)
     {
-        return mysql_real_escape_string($string);
+        return $this->connection->real_escape_string($string);
     }
 
     public function escapeArray($array)
@@ -52,17 +56,23 @@ class Model
 
     public function query($qry)
     {
-        $result = mysql_query($qry) or die('MySQL Error: ' . mysql_error());
+        $this->queryUtf8();
+        $result = $this->connection->query($qry) or die($this->getConnectionError());
         $resultObjects = array();
-
-        while ($row = mysql_fetch_object($result)) $resultObjects[] = $row;
-
+        while ($row = $result->fetch_assoc()) $resultObjects[] = $row;
+        mysqli_free_result($result);
         return $resultObjects;
+    }
+
+    public function queryUtf8()
+    {
+        $this->connection->query("set names 'utf8'");
     }
 
     public function execute($qry)
     {
-        $exec = mysql_query($qry) or die('MySQL Error: ' . mysql_error());
+        $this->queryUtf8();
+        $exec = $this->connection->query($qry) or die($this->getConnectionError());
         return $exec;
     }
 
